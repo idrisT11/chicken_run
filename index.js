@@ -8,7 +8,7 @@ const mysql = require('mysql')
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "",           // <<<< A modifier
+    password: "r00TR00t",           // <<<< A modifier
     database: 'chicken_run'
 })
 
@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({
 app.get('/chicken', (req, res)=>{
     db.query('SELECT * FROM chickens', function (error, results, fields) {
 
-        if (error) throw error
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    
         res.send({ error: false, data: results })
     });
 })
@@ -50,7 +50,7 @@ app.get('/chicken/name/:value', (req, res)=>{
     let name = req.params.value
 
     db.query('SELECT * FROM chickens WHERE NAME = ? ', name, function (error, results, fields) {
-        if (error) throw error
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    
         res.send({ error: false, data: results })
     });
 })
@@ -60,7 +60,7 @@ app.get('/chicken/:id', (req, res)=>{
     let id = req.params.id
     
     db.query('SELECT * FROM chickens WHERE ID = ? ', id, function (error, results, fields) {
-        if (error) throw error
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    
         res.send({ error: false, data: results })
     });
 })
@@ -71,7 +71,7 @@ app.delete('/chicken/:id', function (req, res) {
     let id = req.params.id;
     
     db.query('DELETE FROM chickens WHERE id = ?', [id], function (error, results, fields) {
-        if (error) throw error;
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    ;
         return res.send({ error: false, message: 'Le chicken a été supprimé.' });
     });
 }); 
@@ -92,7 +92,7 @@ app.post('/chicken', (req, res) => {
 
     db.query('INSERT INTO chickens(NAME, BIRTHDAY, WEIGHT, FARM_ID)'+ 
             'VALUES (?, ?, ?, (SELECT ID FROM farmyard WHERE NAME = ?))', [name, date, weight, farm], function (error, results, fields) {
-        if (error) throw error;
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    
         return res.send({ error: false, message: 'Le chicken a été ajouté à la BDD.' });    
     })
 })
@@ -107,8 +107,9 @@ app.put('/chicken/:id', function (req, res) {
         return res.status(400).send({ error: true, message: "Vous devez founrir l'id et les parametres à modifier" });
     
     db.query("UPDATE chickens SET ? WHERE id = ?", [chicken, id], function (error, results, fields) {
-    if (error) throw error;
-    return res.send({ error: false, message: 'Le chicken a été modifié.' });
+        console.log(error);
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    
+        return res.send({ error: false, message: 'Le chicken a été modifié.' });
     });
 });
 
@@ -121,7 +122,7 @@ app.patch('/chicken/run/:id', function (req, res) {
         return res.status(400).send({ error: true, message: 'Vous devez fournir un id' });    
 
     db.query('UPDATE chickens SET IS_RUNNING = 1, STEPS = STEPS + 1 WHERE ID = ? ', [id], function (error, results, fields) {
-        if (error) throw error;
+        if (error) return res.send({ error: true, message: 'Requette invalide.' });    ;
         return res.send({ error: false, message: 'Le chicken vient de faire un pas.' });
     });
 
