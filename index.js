@@ -8,7 +8,7 @@ const mysql = require('mysql')
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "r00TR00t",           // <<<< A modifier
+    password: "",           // <<<< A modifier
     database: 'chicken_run'
 })
 
